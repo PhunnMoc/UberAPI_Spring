@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -26,62 +27,58 @@ import java.util.Optional;
 public class UserService implements UserDetailsService {
     @Autowired
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
-    @Autowired
-    private AuthenticationManager authenticationManager;
+//    private final PasswordEncoder passwordEncoder;
+//    private final JwtService jwtService;
+//    @Autowired
+//    private AuthenticationManager authenticationManager;
 
     @Override
     public CustomUser loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> user= userRepository.findByUsername(username);
-        if (user == null) {
+        if (user.isEmpty()  ) {
             throw new UsernameNotFoundException(username);
         }
         return new CustomUser(user);
     }
 
-//    public AuthResponse registerUser(AuthRequest authRequest) {
+//    public ResponseEntity<Object> registerUser(AuthRequest authRequest) {
 //        CustomUser customUser=new CustomUser();
 //        User user=new User();
 //        user.setUsername(authRequest.getUsername());
 //        user.setPassword(passwordEncoder.encode(authRequest.getPassword()));
 //        user.setRole(authRequest.getRole());
 //        customUser.setUser(user);
-//        userRepository.save(user);
-//        var jwt=jwtService.generateToken(customUser);
-//
-//        return new AuthResponse(jwt);
+//        boolean userDetails = userRepository.existsByUsername(authRequest.getUsername());
+//        if (!userDetails) {
+//            userRepository.save(user);
+//            var jwt=jwtService.generateToken(customUser);
+//            return  ResponseHandler.responseBuilder("registerUser success", HttpStatus.OK,new AuthResponse(jwt));
+//        }
+//        return  ResponseHandler.responseBuilder("This username is Existed", HttpStatus.BAD_REQUEST,null);
 //    }
-    public ResponseEntity<Object> registerUser(AuthRequest authRequest) {
-        CustomUser customUser=new CustomUser();
-        User user=new User();
-        user.setUsername(authRequest.getUsername());
-        user.setPassword(passwordEncoder.encode(authRequest.getPassword()));
-        user.setRole(authRequest.getRole());
-        customUser.setUser(user);
-        boolean userDetails = userRepository.existsByUsername(authRequest.getUsername());
-        if (!userDetails) {
-            userRepository.save(user);
-            var jwt=jwtService.generateToken(customUser);
-            return  ResponseHandler.responseBuilder("registerUser success", HttpStatus.OK,new AuthResponse(jwt));
-        }
-        return  ResponseHandler.responseBuilder("This username is Existed", HttpStatus.BAD_REQUEST,null);
-    }
-
-    public AuthResponse authenticateUser(AuthRequest authRequest) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        authRequest.getUsername(),
-                        authRequest.getPassword())
-        );
-        var userDetails = userRepository.findByUsername(authRequest.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException(authRequest.getUsername()));
-        CustomUser customUser=new CustomUser();
-        customUser.setUser(userDetails);
-        var jwt=jwtService.generateToken(customUser);
-        return new AuthResponse(jwt);
-
-    }
+//
+//    public ResponseEntity<Object> authenticateUser(AuthRequest authRequest) {
+//        try {
+//            authenticationManager.authenticate(
+//                    new UsernamePasswordAuthenticationToken(
+//                            authRequest.getUsername(),
+//                            authRequest.getPassword()
+//                    )
+//            );
+//            // Nếu xác thực thành công, trả về phản hồi thành công
+//            return ResponseEntity.ok("Đăng nhập thành công");
+//        } catch (AuthenticationException ex) {
+//            // Xử lý ngoại lệ xác thực
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Tên đăng nhập hoặc mật khẩu không đúng");
+//        }
+////        var userDetails = userRepository.findByUsername(authRequest.getUsername())
+////                .orElseThrow(() -> new UsernameNotFoundException(authRequest.getUsername()));
+////        CustomUser customUser=new CustomUser();
+////        customUser.setUser(userDetails);
+////        var jwt=jwtService.generateToken(customUser);
+////        return  ResponseHandler.responseBuilder("Auth success", HttpStatus.OK,new AuthResponse(jwt));
+//
+//    }
 
 
 
