@@ -1,5 +1,6 @@
 package com.example.demo.security;
 
+import com.example.demo.customModels.Role;
 import com.example.demo.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

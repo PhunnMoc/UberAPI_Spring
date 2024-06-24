@@ -15,11 +15,11 @@ import java.util.Optional;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CustomUser implements UserDetails {
+public class CustomUserDetails implements UserDetails {
 
     private User user;
 
-    public CustomUser(Optional<User> user) {
+    public CustomUserDetails(Optional<User> user) {
         this.user = user.get();
     }
 
