@@ -8,6 +8,7 @@ import com.example.demo.repositories.UserRepository;
 import com.example.demo.response.ResponseHandler;
 import com.example.demo.security.AuthedManager;
 import com.example.demo.security.JwtService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +33,10 @@ public class UserService {
 
 
 
-    public ResponseEntity<Object> authenticateUser(AuthRequest authRequest){
+    public ResponseEntity<Object> authenticateUser(@Valid AuthRequest authRequest,BindingResult bindingResult){
+        if (bindingResult.hasErrors()) {
+            return ResponseHandler.responseBuilder(bindingResult.getFieldError().getDefaultMessage(), HttpStatus.BAD_REQUEST, null);
+        }
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -58,7 +63,10 @@ public class UserService {
             return ResponseHandler.responseBuilder("Authentication failed", HttpStatus.UNAUTHORIZED, null);
         }
     }
-        public ResponseEntity<Object> registerUser(AuthRequest authRequest) {
+    public ResponseEntity<Object> registerUser(@Valid AuthRequest authRequest, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResponseHandler.responseBuilder(bindingResult.getFieldError().getDefaultMessage(), HttpStatus.BAD_REQUEST, null);
+        }
         CustomUserDetails customUser=new CustomUserDetails();
         User user=new User();
         user.setUsername(authRequest.getUsername());
@@ -71,6 +79,6 @@ public class UserService {
             var jwt=jwtService.generateToken(customUser);
             return  ResponseHandler.responseBuilder("registerUser success", HttpStatus.OK,new AuthResponse(jwt));
         }
-        return  ResponseHandler.responseBuilder("This username is Existed", HttpStatus.BAD_REQUEST,null);
+        return  ResponseHandler.responseBuilder("This username is Existed", HttpStatus.UNAUTHORIZED,null);
     }
 }
