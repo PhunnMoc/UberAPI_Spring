@@ -64,7 +64,10 @@ public class SecurityConfig   {
         http // Tra ve mot chuoi bo loc bao mat
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/user/auth/**").permitAll()
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/user/driver/**").hasRole("DRIVER")
+                        .requestMatchers("/user/client/**").hasRole("CLIENT")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest()
                         .authenticated()
                 )

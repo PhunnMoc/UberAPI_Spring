@@ -1,5 +1,5 @@
 package com.example.demo.customModels;
 
 public enum Role {
-    ROLE_USER, ROLE_ADMIN
+    ROLE_CLIENT,ROLE_DRIVER, ROLE_ADMIN
 }

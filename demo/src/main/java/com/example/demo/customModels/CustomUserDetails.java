@@ -59,6 +59,13 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+//        Collection<? extends GrantedAuthority> authorities = getAuthorities();
+//        boolean isEnalbe = authorities.stream()
+//                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN")
+//                || grantedAuthority.getAuthority().equals("ROLE_CLIENT")
+//                || grantedAuthority.getAuthority().equals("ROLE_DRIVER"));
+//                ;
+
+        return this.user.getEnabled();
     }
 }
